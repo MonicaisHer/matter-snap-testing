@@ -18,36 +18,8 @@ type Net struct {
 const dialTimeout = 2 * time.Second
 
 var portService = map[string]string{
-	// platform services
-	"59880": "core-data",
-	"59881": "core-metadata",
-	"59882": "core-command",
-	"8000":  "nginx(http)",
-	"8443":  "nginx(https)",
-	"8200":  "vault",
-	"8500":  "consul",
-	"6379":  "redis",
-	"59861": "support-scheduler",
-	// app services
-	"59711": "app-rfid-llrp-inventory",
-	"59701": "app-service-configurable",
-	// security services
-	"59842": "security-proxy-auth",
-	// device services
-	"59910": "device-gpio",
-	"59901": "device-modbus",
-	"59982": "device-mqtt",
-	"59984": "device-onvif-camera",
-	"59986": "device-rest",
-	"59989": "device-rfid-llrp",
-	"59993": "device-snmp",
-	"59983": "device-usb-camera",
-	"8554":  "device-usb-camera/rtsp",
-	"59900": "device-virtual",
-	// others
-	"20498": "ekuiper",
-	"59720": "ekuiper/rest-api",
-	"4000":  "ui",
+	// matter controller
+	"5550": "chip-tool",
 }
 
 // servicePort looks up the service port by app name
@@ -58,26 +30,6 @@ func ServicePort(serviceName string) string {
 		}
 	}
 	panic("Found no port number for service: " + serviceName)
-}
-
-func PlatformPorts(includePublicPorts bool) (ports []string) {
-	ports = append(ports,
-		ServicePort("core-data"),
-		ServicePort("core-metadata"),
-		ServicePort("core-command"),
-		ServicePort("vault"),
-		ServicePort("consul"),
-		ServicePort("redis"),
-                ServicePort("nginx(http)"),
-		ServicePort("security-proxy-auth"),
-		
-	)
-	if includePublicPorts {
-		ports = append(ports,
-			ServicePort("nginx(https)"),
-		)
-	}
-	return
 }
 
 func TestNet(t *testing.T, snapName string, conf Net) {
@@ -176,12 +128,6 @@ func WaitServiceOnline(t *testing.T, maxRetry int, ports ...string) error {
 	}
 
 	return nil
-}
-
-// WaitPlatformOnline waits for all platform ports to come online
-// by dialing its port(s) up to a maximum number
-func WaitPlatformOnline(t *testing.T) error {
-	return WaitServiceOnline(t, 180, PlatformPorts(true)...)
 }
 
 // requirePortOpen checks if the local port(s) accepts connections

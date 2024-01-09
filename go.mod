@@ -1,4 +1,4 @@
-module edgex-snap-testing
+module matter-snap-testing
 
 go 1.17
 

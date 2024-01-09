@@ -1,5 +1,5 @@
-# EdgeX Snap Tests
-Test scripts, Github actions, and workflows for the [EdgeX Foundry](https://docs.edgexfoundry.org/) snaps.
+# Matter Snap Tests (WIP)
+Test scripts, Github actions, and workflows for the [Matter](https://github.com/project-chip/connectedhomeip/tree/master) snaps.
 
 The following diagram shows the Snap Testing workflow for building and testing snaps from upstream source code:
 ```mermaid
@@ -22,10 +22,6 @@ flowchart LR
 The Github Workflow configurations (triggers, jobs, etc) are maintained in respective upstream source codes.  
 The Github Actions and testing suites are maintained in this repository.
 
-For example, [this](https://github.com/edgexfoundry/edgex-go/blob/main/.github/workflows/snap.yaml) is the workflow of the tests that run on the edgex-go project. The Github Actions used in the workflow are versioned using a major semantic versioning tag. This tag is [automatically moved](https://github.com/canonical/edgex-snap-testing/blob/main/.github/workflows/versioning.yml) to the latest minor and patch releases of the tests (this repository).
-
-This project has additional [workflows](https://github.com/canonical/edgex-snap-testing/tree/main/.github/workflows) such as for running the tests weekly and on local PRs.
-
 ## Test locally
 This section includes example command to run tests.
 
@@ -37,7 +33,7 @@ Useful `go test` flags are:
 
 #### Run one testing suite
 ```bash
-go test -v -failfast -count 1 ./test/suites/device-mqtt
+go test -v -failfast -count 1 ./test/suites/chip-tool
 ```
 
 #### Run all suites
@@ -48,54 +44,10 @@ go test -p 1 -timeout 60m -failfast -count 1 ./test/suites/...
 #### Run one suite with env variables
 The environment variables are defined in [test/utils/env.go](./test/utils/env.go)
 
-Full config test:
-```bash
-FULL_CONFIG_TEST=true go test -v -failfast -count 1 ./test/suites/device-mqtt
-```
-
-Testing with a local platform snap:
-```bash
-LOCAL_PLATFORM_SNAP="edgexfoundry_3.1.0-dev.3_amd64.snap" \
-go test -v -failfast -count 1 ./test/suites/edgexfoundry
-```
-Testing with a local service snap:
-```bash
-LOCAL_SERVICE_SNAP="edgex-device-mqtt_2.0.1-dev.15_amd64.snap" \
-go test -v -failfast -count 1 ./test/suites/device-mqtt
-```
-Testing with local platform and service snaps:
-```bash
-LOCAL_PLATFORM_SNAP="edgexfoundry_3.1.0-dev.3_amd64.snap" \
-LOCAL_SERVICE_SNAP="edgex-device-mqtt_2.0.1-dev.15_amd64.snap" \
-go test -v -failfast -count 1 ./test/suites/device-mqtt
-```
-
-Test with skipping the removal of snaps during teardown:
-```bash
-SKIP_TEARDOWN_REMOVAL=true go test -v -failfast -count 1 ./test/suites/
-```
-
-Test by revision:
-```
-PLATFORM_CHANNEL=4259 go test -v -failfast -count 1 ./test/suites/edgex-no-sec
-```
-This requires developer access; see `snap install -h` for details.
-
-#### Run only one test from a suite
-```
-go test -v ./test/suites/edgexfoundry --run=TestCommon
-```
-```
-go test -v ./test/suites/edgex-config-provider -run=TestConfigProvider/device-virtual
-```
-
 #### Test the testing utils
 ```bash
 go test ./test/utils -count=10
 ```
-
-#### Run EdgeX Ubuntu Core tests
-Refer to [edgex-ubuntu-core-testing](https://github.com/canonical/edgex-ubuntu-core-testing)
 
 ## Test using Github Actions
 This project includes two Github Actions that can be used in workflows to test snaps:
@@ -120,7 +72,7 @@ jobs:
     steps:
       - name: Build and upload snap
         id: build
-        uses: canonical/edgex-snap-testing/build@v2
+        uses: canonical/matter-snap-testing/build@v2
     outputs:
       snap: ${{steps.build.outputs.snap}}
 
@@ -129,25 +81,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download and test snap
-        uses: canonical/edgex-snap-testing/test@v2
+        uses: canonical/matter-snap-testing/test@v2
         with:
           name: device-mqtt
           snap: ${{needs.build.outputs.snap}}
-```
-
-## Testing Scripts
-
-The testing scripts can be located in the [./test/scripts](./test/scripts/) directory.
-
-To create a token for example user:
-
-```bash
-./test/scripts/login-test-user.sh
-```
-
-To create a self-signed TLS certificate and replace the defaults:
-
-```bash
-./test/scripts/create-tls-certificates.sh
 ```
 

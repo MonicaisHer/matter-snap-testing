@@ -10,9 +10,6 @@ import (
 // TestRefresh tests an EdgeX upgrade using snap refresh
 func TestRefresh(t *testing.T, snapName string) {
 	t.Run("refresh", func(t *testing.T) {
-		if LocalPlatformSnap() {
-			t.Skip("Skip refresh for local snap build")
-		}
 
 		const stableChannel = "latest/stable"
 
@@ -29,8 +26,6 @@ func TestRefresh(t *testing.T, snapName string) {
 		t.Cleanup(func() {
 			SnapRemove(t, snapName)
 			SnapInstallFromStore(t, snapName, ServiceChannel)
-
-			WaitPlatformOnline(t)
 		})
 
 		originalVersion := SnapVersion(t, snapName)
@@ -40,7 +35,6 @@ func TestRefresh(t *testing.T, snapName string) {
 			SnapRefresh(t, snapName, ServiceChannel)
 			refreshVersion := SnapVersion(t, snapName)
 			refreshRevision = SnapRevision(t, snapName)
-			WaitPlatformOnline(t)
 
 			t.Logf("Successfully upgraded from %s (%s) to %s (%s)",
 				originalVersion, originalRevision, refreshVersion, refreshRevision)

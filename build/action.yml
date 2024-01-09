@@ -1,4 +1,4 @@
-name: EdgeX Snap Builder
+name: Matter Snap Builder
 description: |
   This action clones the source code, builds the snap using and 
   uploads the resulting snap as a build artifact
@@ -38,7 +38,7 @@ runs:
     - uses: snapcore/action-build@v1
       id: build
       with:
-        snapcraft-args: ${{ env.base == 'core22' && '--verbose' || '' }}
+        snapcraft-args: '--verbose'
     
     # Upload the snap as build artifact
     - uses: actions/upload-artifact@v3
